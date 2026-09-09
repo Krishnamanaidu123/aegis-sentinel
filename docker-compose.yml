@@ -1,0 +1,23 @@
+version: '3.8'
+services:
+  api:
+    build: .
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+    volumes:
+      - ./aegis.db:/app/aegis.db
+      - ./mitre_attack.json:/app/mitre_attack.json
+    restart: unless-stopped
+
+  dashboard:
+    build: .
+    command: streamlit run streamlit_app.py --server.port 8501 --server.address 0.0.0.0
+    ports:
+      - "8501:8501"
+    env_file:
+      - .env
+    depends_on:
+      - api
+    restart: unless-stopped
